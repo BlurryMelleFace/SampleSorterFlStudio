@@ -1,22 +1,42 @@
 import os
 import shutil
-import re
+import tkinter as tk  
 
 # Specify the path to the samples directory and the destination directory
-samples_dir = r"C:\Users\morit\Documents\Local Samples\Big Samplepacks\Trap Samples\BEsomorph"
-dest_dir = r"C:\Users\morit\Desktop\Sorting Test"
+samples_dir = r"C:\Users\morit\Documents\Local Samples\Big Samplepacks"
+dest_dir = r"C:\Users\morit\Documents\Local Samples\Sorted"
+
+shutil.rmtree(dest_dir, ignore_errors=True, onerror=os.remove)
 
 # Create a dictionary of categories and their corresponding keywords
 categories = {
-    "Drums": ["kick"],
+    "Drums": ["Drum","drums"],
     "Kicks": ["kick"],
     "Snare": ["snare"],
-    "Clap": ["clap"],
-    "Perc": ["perc","percussive"],
-    "FX": ["fx","downfilter","upfilter"],
+    "Clap": ["clap","claps"],
+    "Toms": ["tom","toms"],
+    "Crash": ["crash"],
+    "Snaps": ["snap","Snaps"],
+    "Fills": ["fill", "fills"],
+    "Hits": ["hit","hits"],
+    "Shaker": ["shake","shaker"],
+    "Rides": ["rides","ride"],
+    "MelodyLoops": ["melody","Guitar","piano","string",],
+    "Rim": ["rim"],
+    "Cymbal": ["cymbal"],
+    "Perc": ["perc","percussive","percussion"],
+    "FX": ["fx","downfilter","upfilter","reverse","rev","sweep","noise","downsweep","upsweep","impact","uplifter"],
     "Hats":["hat","hihat"],
-    "Vocal": ["vox","vocal"],
-    "808":["808"]
+    "Top": ["top"],
+    "Vocal": ["vox","vocal","vocoder"],
+    "Chants": ["chant", "chants"],
+    "Glass": ["glass"],
+    "808":["808"],
+    "Misc": ["misc"],
+    "Horns": ["horn","horns"],
+    "Stabs": ["stab","stabs"],
+    "Foley": ["foley"],
+    "Ambiance": ["ambiance"]
 }
 
 # Define a function to search for audio files in a directory (including subdirectories)
@@ -24,7 +44,7 @@ def find_audio_files(directory):
     audio_files = []
     for dirpath, dirnames, filenames in os.walk(directory):
         for filename in filenames:
-            if filename.lower().endswith((".wav", ".mp3", ".ogg", ".flac")):
+            if filename.lower().endswith((".wav", ".mp3", ".ogg", ".flac", ".aif")):
                 audio_files.append(os.path.join(dirpath, filename))
     return audio_files
 
@@ -45,8 +65,7 @@ for category, keywords in categories.items():
         filename = os.path.basename(file_path)
 
         # Split the filename into words
-        
-        words = filename.split(" ")
+        words = filename.split()
         
         # Loop through all the words in the filename
         for word in words:
@@ -55,14 +74,7 @@ for category, keywords in categories.items():
             if word.split(".")[0].lower() in keywords:
                 # Copy the file to the corresponding category folder
                 dest_path = os.path.join(category_path, filename)
-                shutil.copy(file_path, dest_path)         
+                if not os.path.exists(dest_path):
+                    shutil.copy(file_path, dest_path)   
+                    print(filename)
 
-
-
-
-# Using Regexes
-# print(f"Copied file: {word.lower()}, {category_path}, {filename}, {file_path}, {dest_path}") 
-# c = "hallo/welt.wave"
-# m = re.search("welt", c)
-# if isinstance(m ,re.Match):
-#     print("Match!")
