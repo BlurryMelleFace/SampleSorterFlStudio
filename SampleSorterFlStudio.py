@@ -13,21 +13,7 @@ shutil.rmtree(dest_dir, ignore_errors=True, onerror=os.remove)
 
 # create the window
 root = tk.Tk()
-
-
-# get the screen dimensions
-screen_width = root.winfo_screenwidth()
-screen_height = root.winfo_screenheight()
-
-WINDOW_WIDTH = 600
-WINDOW_HEIGHT = 400
-
-# calculate the x and y coordinates of the window
-x = (screen_width // 2) - (WINDOW_WIDTH // 2)
-y = (screen_height // 2) - (WINDOW_HEIGHT // 2)
-
-# set the window size and position
-root.geometry('{}x{}+{}+{}'.format(WINDOW_WIDTH, WINDOW_HEIGHT, x, y))
+root.title("Sample Sorter")
 
 #functions for the buttons
 def getSampleDirectory():
@@ -57,21 +43,28 @@ def entry2OnChange(*args):
 frame = tk.Frame(root)
 frame.pack()
 
+directoryFrame = tk.LabelFrame(frame, text="Directory Selection")
+directoryFrame.grid(row= 0, column=0, padx= 20, pady=10)
+
+sampleLabel = tk.Label(directoryFrame, text="Sample Directory")
+sampleLabel.grid(row=0, column=0)
+destinationLabel = tk.Label(directoryFrame, text="Destination Directory")
+destinationLabel.grid(row=0, column=1)
+
 entryString = tk.StringVar()
 entryString.trace("w", entryOnChange)
-entry = tk.Entry(frame, width = 200, textvariable= entryString)
-entry.pack()
+entry = tk.Entry(directoryFrame, textvariable=entryString, width=80)
+entry.grid(row=1, column=0, padx= 5, pady=5)
 
 entry2String =tk.StringVar()
 entry2String.trace("w", entry2OnChange)
-entry2 = tk.Entry(frame, width = 200, textvariable= entry2String)
-entry2.pack()
+entry2 = tk.Entry(directoryFrame, textvariable= entry2String, width=80)
+entry2.grid(row=1, column=1, padx= 5, pady=5)
 
-button = tk.Button(text="Select Sample Directory", command= getSampleDirectory)
-button.pack()
-
-button2 = tk.Button(text="Select Destination Directory", command= getDestDirectory)
-button2.pack()
+button = tk.Button(directoryFrame,text="Select Sample Directory", command= getSampleDirectory)
+button.grid(row=2, column=0, padx= 5, pady=5)
+button2 = tk.Button(directoryFrame,text="Select Destination Directory", command= getDestDirectory)
+button2.grid(row=2, column=1, padx= 5, pady=5)
 
 # Create a dictionary of categories and their corresponding keywords
 categories = {
@@ -169,8 +162,11 @@ def sortingAlgorithm():
 
     messagebox.showinfo(None, "Finished!")
 
-button3 = tk.Button(text="Start", command= sortingAlgorithm)
-button3.pack()
+startFrame = tk.LabelFrame(frame, text="Start")
+startFrame.grid(row= 1, column=0, padx= 20, pady=10)
+
+button3 = tk.Button(startFrame,text="Start", command= sortingAlgorithm)
+button3.grid(row=0, column=1, padx= 5, pady=5)
 
 # Run the main loop
 root.mainloop()  
