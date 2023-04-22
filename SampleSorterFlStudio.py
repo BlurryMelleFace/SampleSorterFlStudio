@@ -1,8 +1,10 @@
 import os
 import shutil
 import tkinter as tk
+from tkinter import ttk 
 from tkinter import filedialog  
 import tkinter.messagebox as messagebox
+
 
 # Specify the path to the samples directory and the destination directory
 
@@ -31,8 +33,7 @@ def getDestDirectory():
 def entryOnChange(*args):
     global samples_dir
     samples_dir = entryString.get()
-    print(samples_dir)
-    
+    print(samples_dir)   
 
 def entry2OnChange(*args):
     global dest_dir
@@ -67,6 +68,27 @@ button.grid(row=2, column=0, padx= 5, pady=5)
 button2 = tk.Button(directoryFrame,text="Select Destination Directory", command= getDestDirectory)
 button2.grid(row=2, column=1, padx= 5, pady=5)
 
+# Progress Frame 
+
+progressFrame = tk.LabelFrame(frame, text="Progress")
+progressFrame.grid(row= 3, column=0, padx= 20, pady=10, sticky="NSEW")
+progressFrame.columnconfigure(0, weight=1) # weight 1 to dynamically ajust
+
+# Progress1
+
+progressbar1Progress= ttk.Progressbar(progressFrame, orient="horizontal", mode="determinate")
+progressbar1Progress.grid(row=0, column=0, padx= 5, pady=5, sticky="EW")
+
+labelProgress1 =tk.Label(progressFrame, text= "Copied: ")
+labelProgress1.grid(row=0,column=1, padx= 5, pady=5)
+#Progress2
+
+progressbar2Progress= ttk.Progressbar(progressFrame, orient="horizontal", mode="determinate")
+progressbar2Progress.grid(row=1, column=0, padx= 5, pady=5, sticky="EW")
+
+labelProgress2 =tk.Label(progressFrame, text= "Identified: ")
+labelProgress2.grid(row=1,column=1, padx= 5, pady=5)
+
 # Create a dictionary of categories and their corresponding keywords
 categories = {
     "Drums": ["Drum","drums"],
@@ -100,6 +122,7 @@ categories = {
 }
 
 # Define a function to search for audio files in a directory (including subdirectories)
+
 def find_audio_files(directory):
     audio_files = []
     for dirpath, dirnames, filenames in os.walk(directory):
@@ -109,7 +132,9 @@ def find_audio_files(directory):
     return audio_files
 
 # Loop through all categories
+
 def sortingAlgorithm():
+    
     if not dest_dir and not samples_dir:
         messagebox.showerror("Error", "Please select both destination directories.")
         return    
@@ -122,6 +147,13 @@ def sortingAlgorithm():
     
     # Find all audio files in the samples directory (including subdirectories)
     audio_files = find_audio_files(samples_dir)
+
+    # Progressbar
+    progressIteration = 100/len(audio_files)
+    progressbar1Progress['value'] = 0
+    progressbar2Progress['value'] = 0
+
+    print(progressIteration)
 
     if not audio_files:
         messagebox.showerror("Error", "No Samples Found")
@@ -136,7 +168,8 @@ def sortingAlgorithm():
             os.makedirs(category_path)
 
         # Loop through all audio files
-        for file_path in audio_files:
+        for file_path in audio_files:    
+
             # Get the filename without the path
             filename = os.path.basename(file_path)
 
@@ -146,14 +179,26 @@ def sortingAlgorithm():
             # Loop through all the words in the filename
             for word in words:
                 # Check if the word is a keyword for the current category
-                assert(isinstance(word, str))
+                assert(isinstance(word, str))       
+
                 if word.split(".")[0].lower() in keywords:
                     # Copy the file to the corresponding category folder
                     dest_path = os.path.join(category_path, filename)
-                    if not os.path.exists(dest_path):
-                        shutil.copy(file_path, dest_path)   
+                    
+                    #Progressbar 2
+                    progressbar2Progress['value'] += progressIteration
+                    root.update_idletasks()
+                    labelProgress2.configure(text="Identified: {}%".format(int(progressbar2Progress['value'])))
 
-                        print(filename)
+                    if not os.path.exists(dest_path):                                              
+                        shutil.copy(file_path, dest_path)   
+                        print(filename) 
+                        # Update the Progressbar
+                        progressbar1Progress['value'] += progressIteration
+                        root.update_idletasks()     
+                        
+                    labelProgress1.configure(text="Copied: {}%".format(int(progressbar1Progress['value'])))
+                
 
     # iterate through each item in the directory
     for item in os.listdir(dest_dir):
