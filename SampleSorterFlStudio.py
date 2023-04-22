@@ -14,6 +14,7 @@ shutil.rmtree(dest_dir, ignore_errors=True, onerror=os.remove)
 # create the window
 root = tk.Tk()
 root.title("Sample Sorter")
+root.iconbitmap(r'C:\Users\morit\OneDrive\Hobbies\CodingProjects\SampleSorterFlStudio\FL.ico')
 
 #functions for the buttons
 def getSampleDirectory():
@@ -44,7 +45,7 @@ frame = tk.Frame(root)
 frame.pack()
 
 directoryFrame = tk.LabelFrame(frame, text="Directory Selection")
-directoryFrame.grid(row= 0, column=0, padx= 20, pady=10)
+directoryFrame.grid(row= 0, column=0, padx= 20, pady=10, sticky="NSEW")
 
 sampleLabel = tk.Label(directoryFrame, text="Sample Directory")
 sampleLabel.grid(row=0, column=0)
@@ -83,7 +84,7 @@ categories = {
     "Rim": ["rim"],
     "Cymbal": ["cymbal"],
     "Perc": ["perc","percussive","percussion"],
-    "FX": ["fx","downfilter","upfilter","reverse","rev","sweep","noise","downsweep","upsweep","impact","Uplifter"],
+    "FX": ["fx","downfilter","upfilter","reverse","rev","sweep","noise","downsweep","upsweep","impact","Uplifter","buildup"],
     "Hats":["hat","hihat"],
     "Top": ["top"],
     "Vocal": ["vox","vocal","vocoder"],
@@ -94,7 +95,8 @@ categories = {
     "Horns": ["horn","horns"],
     "Stabs": ["stab","stabs"],
     "Foley": ["foley"],
-    "Ambiance": ["ambiance"]
+    "Ambiance": ["ambiance"],
+    "Vinyl": ["Vinyl"]
 }
 
 # Define a function to search for audio files in a directory (including subdirectories)
@@ -121,7 +123,9 @@ def sortingAlgorithm():
     # Find all audio files in the samples directory (including subdirectories)
     audio_files = find_audio_files(samples_dir)
 
-    print(audio_files)
+    if not audio_files:
+        messagebox.showerror("Error", "No Samples Found")
+        return       
 
     # Loop through all categories
     for category, keywords in categories.items():
@@ -148,6 +152,7 @@ def sortingAlgorithm():
                     dest_path = os.path.join(category_path, filename)
                     if not os.path.exists(dest_path):
                         shutil.copy(file_path, dest_path)   
+
                         print(filename)
 
     # iterate through each item in the directory
@@ -162,8 +167,18 @@ def sortingAlgorithm():
 
     messagebox.showinfo(None, "Finished!")
 
+# Category Frame
+
+categoryFrame = tk.LabelFrame(frame, text="Categories")
+categoryFrame.grid(row= 1, column=0, padx=20, pady=10, sticky="NSEW")
+
+buttonCategory = tk.Button(categoryFrame,text="Start")
+buttonCategory.grid(row=0, column=1, padx= 5, pady=5)
+
+# Start Frame
+
 startFrame = tk.LabelFrame(frame, text="Start")
-startFrame.grid(row= 1, column=0, padx= 20, pady=10)
+startFrame.grid(row= 2, column=0, padx= 20, pady=10, sticky="NSEW")
 
 button3 = tk.Button(startFrame,text="Start", command= sortingAlgorithm)
 button3.grid(row=0, column=1, padx= 5, pady=5)
