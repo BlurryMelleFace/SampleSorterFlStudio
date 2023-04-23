@@ -18,6 +18,16 @@ root = tk.Tk()
 root.title("Sample Sorter")
 root.iconbitmap(r'C:\Users\morit\OneDrive\Hobbies\CodingProjects\SampleSorterFlStudio\FL.ico')
 
+# Define a function to search for audio files in a directory (including subdirectories)
+
+def find_audio_files(directory):
+    audio_files = []
+    for dirpath, dirnames, filenames in os.walk(directory):
+        for filename in filenames:
+            if filename.lower().endswith((".wav", ".mp3", ".ogg", ".flac", ".aif")):
+                audio_files.append(os.path.join(dirpath, filename))
+    return audio_files
+
 #functions for the buttons
 def getSampleDirectory():
     entry.delete(0,tk.END)
@@ -39,6 +49,11 @@ def entry2OnChange(*args):
     global dest_dir
     dest_dir = entry2String.get()
     print(dest_dir)
+
+def findAudioFiles(*args):
+    global audio_files
+    audio_files = find_audio_files(samples_dir)
+    filesFoundLabel.configure(text="Amount: {}".format(int(len(audio_files))))
     
 # Create a label widget with a default font size
   
@@ -71,7 +86,7 @@ button2.grid(row=2, column=1, padx= 5, pady=5)
 # Progress Frame 
 
 progressFrame = tk.LabelFrame(frame, text="Progress")
-progressFrame.grid(row= 3, column=0, padx= 20, pady=10, sticky="NSEW")
+progressFrame.grid(row= 4, column=0, padx= 20, pady=10, sticky="NSEW")
 progressFrame.columnconfigure(0, weight=1) # weight 1 to dynamically ajust
 
 # Progress1
@@ -81,6 +96,7 @@ progressbar1Progress.grid(row=0, column=0, padx= 5, pady=5, sticky="EW")
 
 labelProgress1 =tk.Label(progressFrame, text= "Copied: ")
 labelProgress1.grid(row=0,column=1, padx= 5, pady=5)
+
 #Progress2
 
 progressbar2Progress= ttk.Progressbar(progressFrame, orient="horizontal", mode="determinate")
@@ -121,16 +137,6 @@ categories = {
     "Vinyl": ["Vinyl"]
 }
 
-# Define a function to search for audio files in a directory (including subdirectories)
-
-def find_audio_files(directory):
-    audio_files = []
-    for dirpath, dirnames, filenames in os.walk(directory):
-        for filename in filenames:
-            if filename.lower().endswith((".wav", ".mp3", ".ogg", ".flac", ".aif")):
-                audio_files.append(os.path.join(dirpath, filename))
-    return audio_files
-
 # Loop through all categories
 
 def sortingAlgorithm():
@@ -147,11 +153,23 @@ def sortingAlgorithm():
     
     # Find all audio files in the samples directory (including subdirectories)
     audio_files = find_audio_files(samples_dir)
+    findAudioFiles()
 
     # Progressbar
-    progressIteration = 100/len(audio_files)
+
     progressbar1Progress['value'] = 0
     progressbar2Progress['value'] = 0
+
+    progressbar1Amount = 0
+    progressbar2Amount = 0    
+
+    labelProgress2.configure(text="Identified: {}%  | {}".format(int(progressbar2Progress['value']), int(progressbar2Amount)))
+    labelProgress1.configure(text="Copied: {}%  | {}".format(int(progressbar1Progress['value']),int(progressbar1Amount)))
+
+    if (len(audio_files) == 0):
+        messagebox.showerror("Error", "Cant Sort with 0 Samples")
+        
+    progressIteration = 100/len(audio_files)
 
     print(progressIteration)
 
@@ -187,17 +205,19 @@ def sortingAlgorithm():
                     
                     #Progressbar 2
                     progressbar2Progress['value'] += progressIteration
+                    progressbar2Amount += 1
                     root.update_idletasks()
-                    labelProgress2.configure(text="Identified: {}%".format(int(progressbar2Progress['value'])))
+                    labelProgress2.configure(text="Identified: {}%  | {}".format(int(progressbar2Progress['value']), int(progressbar2Amount)))
 
                     if not os.path.exists(dest_path):                                              
                         shutil.copy(file_path, dest_path)   
                         print(filename) 
                         # Update the Progressbar
                         progressbar1Progress['value'] += progressIteration
+                        progressbar1Amount += 1
                         root.update_idletasks()     
                         
-                    labelProgress1.configure(text="Copied: {}%".format(int(progressbar1Progress['value'])))
+                    labelProgress1.configure(text="Copied: {}%  | {}".format(int(progressbar1Progress['value']),int(progressbar1Amount)))
                 
 
     # iterate through each item in the directory
@@ -212,10 +232,20 @@ def sortingAlgorithm():
 
     messagebox.showinfo(None, "Finished!")
 
+
+filesFoundFrame = tk.LabelFrame(frame, text="Files Found")
+filesFoundFrame.grid(row= 1, column=0, padx=20, pady=10, sticky="NSEW")
+
+filesFoundButton = tk.Button(filesFoundFrame, text="Search", command = findAudioFiles)
+filesFoundButton.grid(row=0, column=0, padx= 5, pady=5)
+
+filesFoundLabel = tk.Label(filesFoundFrame, text="Amount: ")
+filesFoundLabel.grid(row=0, column=1, padx= 5, pady=5)
+
 # Category Frame
 
 categoryFrame = tk.LabelFrame(frame, text="Categories")
-categoryFrame.grid(row= 1, column=0, padx=20, pady=10, sticky="NSEW")
+categoryFrame.grid(row= 2, column=0, padx=20, pady=10, sticky="NSEW")
 
 buttonCategory = tk.Button(categoryFrame,text="Start")
 buttonCategory.grid(row=0, column=1, padx= 5, pady=5)
@@ -223,7 +253,7 @@ buttonCategory.grid(row=0, column=1, padx= 5, pady=5)
 # Start Frame
 
 startFrame = tk.LabelFrame(frame, text="Start")
-startFrame.grid(row= 2, column=0, padx= 20, pady=10, sticky="NSEW")
+startFrame.grid(row= 3, column=0, padx= 20, pady=10, sticky="NSEW")
 
 button3 = tk.Button(startFrame,text="Start", command= sortingAlgorithm)
 button3.grid(row=0, column=1, padx= 5, pady=5)
