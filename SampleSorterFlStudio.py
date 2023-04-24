@@ -211,15 +211,17 @@ def sortingAlgorithm():
                     root.update_idletasks()
                     labelProgress2.configure(text="Identified: {}%  | {}".format(int(progressbar2Progress['value']), int(progressbar2Amount)))
 
-                    if not os.path.exists(dest_path):                                              
-                        shutil.copy(file_path, dest_path)   
-                        print(filename) 
+                    if not os.path.exists(dest_path):      
                         # Update the Progressbar
                         progressbar1Progress['value'] += progressIteration
                         progressbar1Amount += 1
-                        root.update_idletasks()     
-                        
+
+                        root.update_idletasks()                                           
+                        shutil.copy(file_path, dest_path)   
+                        print(filename)   
+
                     labelProgress1.configure(text="Copied: {}%  | {}".format(int(progressbar1Progress['value']),int(progressbar1Amount)))
+                        
                 
 
     # iterate through each item in the directory
@@ -251,7 +253,6 @@ categoryFrame.grid(row= 2, column=0, padx=20, pady=10, sticky="NSEW")
 
 buttonCategory = tk.Button(categoryFrame,text="Start")
 buttonCategory.grid(row=0, column=1, padx= 5, pady=5)
-
 
 # Start Frame
 
