@@ -55,8 +55,10 @@ def findAudioFiles(*args):
     audio_files = find_audio_files(samples_dir)
     filesFoundLabel.configure(text="Amount: {}".format(int(len(audio_files))))
     
-# Create a label widget with a default font size
-  
+def standardInsert():
+    entry.insert(0,r"C:\Users\morit\Documents\Coding Test\Sample Sorter\Sample Test")
+    entry2.insert(0,r"C:\Users\morit\Documents\Coding Test\Sample Sorter\Sorted")
+
 frame = tk.Frame(root)
 frame.pack()
 
@@ -70,18 +72,27 @@ destinationLabel.grid(row=0, column=1)
 
 entryString = tk.StringVar()
 entryString.trace("w", entryOnChange)
-entry = tk.Entry(directoryFrame, textvariable=entryString, width=80)
+entry = tk.Entry(directoryFrame, textvariable = entryString, width=80)
 entry.grid(row=1, column=0, padx= 5, pady=5)
 
 entry2String =tk.StringVar()
 entry2String.trace("w", entry2OnChange)
-entry2 = tk.Entry(directoryFrame, textvariable= entry2String, width=80)
+entry2 = tk.Entry(directoryFrame, textvariable = entry2String, width=80)
 entry2.grid(row=1, column=1, padx= 5, pady=5)
 
 button = tk.Button(directoryFrame,text="Select Sample Directory", command= getSampleDirectory)
 button.grid(row=2, column=0, padx= 5, pady=5)
+
 button2 = tk.Button(directoryFrame,text="Select Destination Directory", command= getDestDirectory)
 button2.grid(row=2, column=1, padx= 5, pady=5)
+
+# Standard 
+
+standardFrame = tk.LabelFrame(frame, text="Standard")
+standardFrame.grid(row= 6, column=0, padx= 20, pady=10, sticky="NSEW")
+
+buttonStand1= tk.Button(standardFrame,text="Standard", command= standardInsert)
+buttonStand1.grid(row=0, column=0, padx= 5, pady=5)
 
 # Progress Frame 
 
@@ -219,7 +230,7 @@ def sortingAlgorithm():
                         print(filename)   
                     elif os.path.exists(dest_path):
                         deviationlistbox.insert(tk.END,filename)
-
+                        print("******" +filename)
                     labelProgress1.configure(text="Copied: {}%  | {}".format(int(progressbar1Progress['value']),int(progressbar1Amount)))
                         
                 
@@ -270,7 +281,7 @@ deviationFrame.grid(row= 5, column=0, padx= 20, pady=10, sticky="NSEW")
 deviationscrollbar = tk.Scrollbar(deviationFrame)
 deviationscrollbar.grid(row=0, column=1, sticky=tk.N+tk.S)
 
-deviationlistbox = tk.Listbox(deviationFrame, yscrollcommand=deviationscrollbar.set)
+deviationlistbox = tk.Listbox(deviationFrame, yscrollcommand=deviationscrollbar.set, width= 100)
 deviationlistbox.grid(row=0, column=0, sticky=tk.N+tk.S+tk.E+tk.W)
 
 deviationscrollbar.config(command=deviationlistbox.yview)
