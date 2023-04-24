@@ -129,7 +129,7 @@ labelProgress2.grid(row=1,column=1, padx= 5, pady=5)
 # Create a dictionary of categories and their corresponding keywords
 
 categories = {
-    "Drums": ["Drum","drums"],
+    "Drums": ["drum","drums"],
     "Kicks": ["kick"],
     "Snare": ["snare"],
     "Clap": ["clap","claps"],
@@ -155,7 +155,7 @@ categories = {
     "Horns": ["horn","horns"],
     "Stabs": ["stab","stabs"],
     "Foley": ["foley"],
-    "Ambiance": ["ambiance"],
+    "Ambiance": ["ambiance","ambience"],
     "Vinyl": ["Vinyl"]
 }
 
