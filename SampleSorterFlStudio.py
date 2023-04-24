@@ -173,8 +173,6 @@ def sortingAlgorithm():
         
     progressIteration = 100/len(audio_files)
 
-    print(progressIteration)
-
     if not audio_files:
         messagebox.showerror("Error", "No Samples Found")
         return       
@@ -219,6 +217,8 @@ def sortingAlgorithm():
                         root.update_idletasks()                                           
                         shutil.copy(file_path, dest_path)   
                         print(filename)   
+                    elif os.path.exists(dest_path):
+                        deviationlistbox.insert(tk.END,filename)
 
                     labelProgress1.configure(text="Copied: {}%  | {}".format(int(progressbar1Progress['value']),int(progressbar1Amount)))
                         
@@ -261,6 +261,19 @@ startFrame.grid(row= 3, column=0, padx= 20, pady=10, sticky="NSEW")
 
 button3 = tk.Button(startFrame,text="Start", command= sortingAlgorithm)
 button3.grid(row=0, column=1, padx= 5, pady=5)
+
+# Deviation Frame
+
+deviationFrame = tk.LabelFrame(frame, text="Deviations")
+deviationFrame.grid(row= 5, column=0, padx= 20, pady=10, sticky="NSEW")
+
+deviationscrollbar = tk.Scrollbar(deviationFrame)
+deviationscrollbar.grid(row=0, column=1, sticky=tk.N+tk.S)
+
+deviationlistbox = tk.Listbox(deviationFrame, yscrollcommand=deviationscrollbar.set)
+deviationlistbox.grid(row=0, column=0, sticky=tk.N+tk.S+tk.E+tk.W)
+
+deviationscrollbar.config(command=deviationlistbox.yview)
 
 # Run the main loop
 root.mainloop()  
