@@ -106,6 +106,7 @@ labelProgress2 =tk.Label(progressFrame, text= "Identified: ")
 labelProgress2.grid(row=1,column=1, padx= 5, pady=5)
 
 # Create a dictionary of categories and their corresponding keywords
+
 categories = {
     "Drums": ["Drum","drums"],
     "Kicks": ["kick"],
@@ -142,7 +143,7 @@ categories = {
 def sortingAlgorithm():
     
     if not dest_dir and not samples_dir:
-        messagebox.showerror("Error", "Please select both destination directories.")
+        messagebox.showerror("Error", "Please select both directories.")
         return    
     elif not dest_dir:
         messagebox.showerror("Error", "Please select the destination directory.")
@@ -152,6 +153,7 @@ def sortingAlgorithm():
         return
     
     # Find all audio files in the samples directory (including subdirectories)
+
     audio_files = find_audio_files(samples_dir)
     findAudioFiles()
 
@@ -249,6 +251,7 @@ categoryFrame.grid(row= 2, column=0, padx=20, pady=10, sticky="NSEW")
 
 buttonCategory = tk.Button(categoryFrame,text="Start")
 buttonCategory.grid(row=0, column=1, padx= 5, pady=5)
+
 
 # Start Frame
 
