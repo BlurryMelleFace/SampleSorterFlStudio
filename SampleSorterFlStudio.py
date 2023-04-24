@@ -28,6 +28,14 @@ def find_audio_files(directory):
                 audio_files.append(os.path.join(dirpath, filename))
     return audio_files
 
+def allFilenames(directory):
+    audioFiles = []
+    for dirpath, dirnames, filenames in os.walk(directory):
+        for filename in filenames:
+            if filename.lower().endswith((".wav", ".mp3", ".ogg", ".flac", ".aif")):
+                audioFiles.append(filename)
+    return audioFiles
+
 #functions for the buttons
 def getSampleDirectory():
     entry.delete(0,tk.END)
@@ -56,6 +64,8 @@ def findAudioFiles(*args):
     filesFoundLabel.configure(text="Amount: {}".format(int(len(audio_files))))
     
 def standardInsert():
+    entry.delete(0,'end')
+    entry2.delete(0,'end')
     entry.insert(0,r"C:\Users\morit\Documents\Coding Test\Sample Sorter\Sample Test")
     entry2.insert(0,r"C:\Users\morit\Documents\Coding Test\Sample Sorter\Sorted")
 
@@ -168,6 +178,9 @@ def sortingAlgorithm():
     audio_files = find_audio_files(samples_dir)
     findAudioFiles()
 
+    audioFiles = allFilenames(samples_dir)
+    
+
     # Progressbar
 
     progressbar1Progress['value'] = 0
@@ -183,6 +196,12 @@ def sortingAlgorithm():
         messagebox.showerror("Error", "Cant Sort with 0 Samples")
         
     progressIteration = 100/len(audio_files)
+    
+    # Listboxes
+    unidentifiedlistbox.delete(0,'end')
+    deviationlistbox.delete(0,'end')
+
+    deviationList = []
 
     if not audio_files:
         messagebox.showerror("Error", "No Samples Found")
@@ -224,17 +243,24 @@ def sortingAlgorithm():
                         # Update the Progressbar
                         progressbar1Progress['value'] += progressIteration
                         progressbar1Amount += 1
-
                         root.update_idletasks()                                           
                         shutil.copy(file_path, dest_path)   
                         print(filename)   
                     elif os.path.exists(dest_path):
                         deviationlistbox.insert(tk.END,filename)
-                        print("******" +filename)
+                        deviationList.append(filename)
                     labelProgress1.configure(text="Copied: {}%  | {}".format(int(progressbar1Progress['value']),int(progressbar1Amount)))
                         
-                
-
+    print(audioFiles)
+    print(deviationList)
+    print(set(audioFiles + deviationList))
+    for element in set(audioFiles + deviationList):
+        if (element in audioFiles) and (element in deviationList):
+            continue
+        else:
+            print(element)
+            unidentifiedlistbox.insert(tk.END, element)
+        
     # iterate through each item in the directory
     for item in os.listdir(dest_dir):
         # construct the full path for the item
@@ -278,13 +304,28 @@ button3.grid(row=0, column=1, padx= 5, pady=5)
 deviationFrame = tk.LabelFrame(frame, text="Deviations")
 deviationFrame.grid(row= 5, column=0, padx= 20, pady=10, sticky="NSEW")
 
-deviationscrollbar = tk.Scrollbar(deviationFrame)
+# Collision Frame
+
+collisionFrame = tk.LabelFrame(deviationFrame, text="Collisions")
+collisionFrame.grid(row=0, column=0, padx= 20, pady=10, sticky="NSEW")
+
+deviationscrollbar = tk.Scrollbar(collisionFrame)
 deviationscrollbar.grid(row=0, column=1, sticky=tk.N+tk.S)
 
-deviationlistbox = tk.Listbox(deviationFrame, yscrollcommand=deviationscrollbar.set, width= 100)
+deviationlistbox = tk.Listbox(collisionFrame, yscrollcommand=deviationscrollbar.set, width= 70)
 deviationlistbox.grid(row=0, column=0, sticky=tk.N+tk.S+tk.E+tk.W)
 
 deviationscrollbar.config(command=deviationlistbox.yview)
+
+# Unidentified
+unidentifiedFrame = tk.LabelFrame(deviationFrame, text="Unidentified")
+unidentifiedFrame.grid(row=0, column=1, padx= 20, pady=10, sticky="NSEW")
+
+unidentifiedscrollbar = tk.Scrollbar(unidentifiedFrame)
+unidentifiedscrollbar.grid(row=0, column=1, sticky=tk.N+tk.S)
+
+unidentifiedlistbox = tk.Listbox(unidentifiedFrame, yscrollcommand=unidentifiedscrollbar.set, width= 70)
+unidentifiedlistbox.grid(row=0, column=0, sticky=tk.N+tk.S+tk.E+tk.W)
 
 # Run the main loop
 root.mainloop()  
