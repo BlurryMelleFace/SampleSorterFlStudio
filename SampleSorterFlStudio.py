@@ -1,5 +1,6 @@
 import os
 import shutil
+import re
 import tkinter as tk
 from tkinter import ttk 
 from tkinter import filedialog  
@@ -144,7 +145,7 @@ categories = {
     "Rim": ["rim"],
     "Cymbal": ["cymbal"],
     "Perc": ["perc","percussive","percussion"],
-    "FX": ["fx","downfilter","upfilter","reverse","rev","sweep","noise","downsweep","upsweep","impact","Uplifter","buildup"],
+    "FX": ["fx","downfilter","upfilter","reverse","rev","sweep","noise","downsweep","upsweep","impact","Uplifter","buildup", "Noise"],
     "Hats":["hat","hihat"],
     "Top": ["top"],
     "Vocal": ["vox","vocal","vocoder"],
@@ -198,7 +199,6 @@ def sortingAlgorithm():
     progressIteration = 100/len(audio_files)
     
     # Listboxes
-    unidentifiedlistbox.delete(0,'end')
     deviationlistbox.delete(0,'end')
 
     deviationList = []
@@ -222,7 +222,10 @@ def sortingAlgorithm():
             filename = os.path.basename(file_path)
 
             # Split the filename into words
-            words = filename.split()
+            words1 = re.split(r'[_\s.-]+', filename) 
+            
+            words = words1 
+            print(words)
             
             # Loop through all the words in the filename
             for word in words:
@@ -250,16 +253,7 @@ def sortingAlgorithm():
                         deviationlistbox.insert(tk.END,filename)
                         deviationList.append(filename)
                     labelProgress1.configure(text="Copied: {}%  | {}".format(int(progressbar1Progress['value']),int(progressbar1Amount)))
-                        
-    print(audioFiles)
-    print(deviationList)
-    print(set(audioFiles + deviationList))
-    for element in set(audioFiles + deviationList):
-        if (element in audioFiles) and (element in deviationList):
-            continue
-        else:
-            print(element)
-            unidentifiedlistbox.insert(tk.END, element)
+            
         
     # iterate through each item in the directory
     for item in os.listdir(dest_dir):
@@ -317,15 +311,7 @@ deviationlistbox.grid(row=0, column=0, sticky=tk.N+tk.S+tk.E+tk.W)
 
 deviationscrollbar.config(command=deviationlistbox.yview)
 
-# Unidentified
-unidentifiedFrame = tk.LabelFrame(deviationFrame, text="Unidentified")
-unidentifiedFrame.grid(row=0, column=1, padx= 20, pady=10, sticky="NSEW")
 
-unidentifiedscrollbar = tk.Scrollbar(unidentifiedFrame)
-unidentifiedscrollbar.grid(row=0, column=1, sticky=tk.N+tk.S)
-
-unidentifiedlistbox = tk.Listbox(unidentifiedFrame, yscrollcommand=unidentifiedscrollbar.set, width= 70)
-unidentifiedlistbox.grid(row=0, column=0, sticky=tk.N+tk.S+tk.E+tk.W)
 
 # Run the main loop
 root.mainloop()  
